@@ -432,6 +432,13 @@ static const struct gu_card cards[] = {
 	GA106(0x2501), GA106(0x2503), GA106(0x2504), GA106(0x2505),
 	GA106(0x2507), GA106(0x2508), GA106(0x2509), GA106(0x252f),
 	GA106(0x2544),
+
+	/* GeForce RTX 3060 Mobile / Max-Q
+	lspci -nn | grep -i nvidia
+	01:00.0 VGA compatible controller [0300]: NVIDIA Corporation GA106M [GeForce RTX 3060 Mobile / Max-Q] [10de:2560] (rev a1)
+	*/
+	GA106(0x2560), 
+
 };
 
 const struct gu_card *gu_card_find(u16 device)
