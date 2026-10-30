@@ -38,6 +38,33 @@ Linux only. For Windows see the [FAQ](#faq).
 
 ---
 
+## Dell G15 5515 Ryzen Edition with AMD Ryzen 7 5800H and NVIDIA GeForce RTX 3060 Mobile / Max-Q / 6GB
+
+`lspci -nn | grep -i nvidia` gives:
+```
+01:00.0 VGA compatible controller [0300]: NVIDIA Corporation GA106M [GeForce RTX 3060 Mobile / Max-Q] [10de:2560] (rev a1)
+01:00.1 Audio device [0403]: NVIDIA Corporation GA106 High Definition Audio Controller [10de:228e] (rev a1)
+```
+### `Ubuntu 26.04.1 LTS` power consumption
+- Allowing dGPU to sleep lets idle power draw to go to 8W. 
+- After disabling sleep and idle states, idle power draw is around 35W and more. 
+
+### Changes to disable dGPU power off fully during idle
+- `sudo nano /etc/modprobe.d/nvidia-graphics-drivers-kms.conf` and append below lines. The last line is important. 
+```
+### Disable runtime power management to let gpu-unlock functional by blocking gpu going to sleep
+options nvidia NVreg_DynamicPowerManagement=0x00
+options nvidia NVreg_EnablePersistencedMode=1
+options nvidia NVreg_RegistryDwords="PowerMizerEnable=0x1; PerfLevelSrc=0x2222; PowerMizerLevel=0x1; PowerMizerDefaultAC=0x1"
+```
+- `sudo systemctl edit nvidia-persistenced.service` and then add below code in appropriate line. This enables `Persistence-M` in `nvidia-smi` command. 
+```
+[Service]
+ExecStart=
+ExecStart=/usr/bin/nvidia-persistenced --user nvidia-persistenced –persistence-mode
+```
+---
+
 ## What you get
 
 The tensor core rate doubles. How much of that you see depends on how much of
